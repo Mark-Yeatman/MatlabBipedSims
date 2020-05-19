@@ -1,0 +1,43 @@
+
+set(0,'DefaultAxesXGrid','on')
+set(0,'DefaultAxesYGrid','on')
+set(0,'DefaultFigureWindowStyle','docked')
+
+figure('Name','Phase Portrait','NumberTitle','off')
+plot(xout(:,1),xout(:,3))
+title("Phase Portrait")
+xlabel('x')
+ylabel('xdot')
+axis equal
+
+figure('Name','Energies','NumberTitle','off')
+plot(tout, out_extra.E, tout, out_extra.Eref)
+legend("E", "E_{ref}")
+xlabel('time')
+ylabel("Energy (Joules)")
+
+figure('Name','Torque','NumberTitle','off')
+subplot(3,1,1)
+title("Net Force")
+plot(tout, out_extra.u)
+legend("x","y")
+xlabel('time')
+ylabel("Force (N)")
+
+subplot(3,1,2)
+title("Spring-Gravity Force")
+plot(tout, squeeze(out_extra.Force(1,:,:)) )
+legend("x","y")
+xlabel('time')
+ylabel("Force (N)")
+
+subplot(3,1,3)
+title("KPBC Force")
+plot(tout, squeeze(out_extra.Force(2,:,:)) )
+legend("x","y")
+xlabel('time')
+ylabel("Force (N)")
+
+set(0,'DefaultFigureWindowStyle','normal')
+set(0,'DefaultAxesXGrid','off')
+set(0,'DefaultAxesYGrid','off')
