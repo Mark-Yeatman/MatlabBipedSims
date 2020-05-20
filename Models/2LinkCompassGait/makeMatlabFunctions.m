@@ -8,11 +8,11 @@ function makeMatlabFunctions()
     configFolder = thisdir;%(1:idcs(end)-1);
 
     %Where to get the "mathematica" functions
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\StandardizedSimCode\Derivations\ToMatlabOutputs\2LinkCompassGait";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\2LinkCompassGait");
     addpath(genpath(SymFuncsPath))
 
     %What to comment
-    comment = "Compass Gait Configuration file. Only needs state as inputs, parameters are already substituted in";
+    comment = "";
     
     %Make readme for the model and config. 
     fid = fopen(strcat(configFolder,'\SimulationFunctions\info.txt'), 'wt' );

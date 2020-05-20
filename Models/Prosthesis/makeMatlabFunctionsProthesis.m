@@ -8,13 +8,13 @@ function makeMatlabFunctionsProthesis()
     configFolder = thisdir(1:idcs(end)-1);
 
     %Where to get the "mathematica" functions
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\StandardizedSimCode\Derivations\ToMatlabOutputs\Prosthesis";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\Prosthesis");
     addpath(genpath(SymFuncsPath))
 
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\StandardizedSimCode\Derivations\ToMatlabOutputs\ProsthesisHeelFrame";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\ProsthesisHeelFrame");
     addpath(genpath(SymFuncsPath))
     
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\StandardizedSimCode\Derivations\ToMatlabOutputs\ProsthesisHipFrame";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\ProsthesisHipFrame");
     addpath(genpath(SymFuncsPath))
     
     %What to comment

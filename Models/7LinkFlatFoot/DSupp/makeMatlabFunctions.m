@@ -8,7 +8,7 @@ function makeMatlabFunctions()
     configFolder = strcat(thisdir,'\SimulationFunctions');
 
     %Where to get the "mathematica" functions
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\SlipEmbedWork\Derivations\ToMatlabOutputs\7LinkFlatFoot";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\7LinkFlatFoot");
     addpath(genpath(SymFuncsPath))
 
     %What to comment in the matlab functions

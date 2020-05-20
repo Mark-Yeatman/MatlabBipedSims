@@ -8,7 +8,7 @@ function makeMatlabFunctionsProthesisTestBench()
     configFolder = strcat(thisdir(1:idcs(end)-1),'\TestBench');
 
     %Where to get the "mathematica" functions
-    SymFuncsPath = "Z:\Member Folders\Mark Yeatman\Codes\Matlab\StandardizedSimCode\Derivations\ToMatlabOutputs\ProsthesisTestBench";
+    SymFuncsPath = strcat(pwd,"\Derivations\ToMatlabOutputs\ProsthesisTestBench");
     addpath(genpath(SymFuncsPath))
     
     %What to comment
