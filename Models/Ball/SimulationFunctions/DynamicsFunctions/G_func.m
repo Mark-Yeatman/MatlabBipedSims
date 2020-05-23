@@ -1,6 +1,6 @@
-function G = G_func(x)
+function G = G_func(x,params)
     global flowdata
-    g = flowdata.Parameters.Environment.g;
-    m = flowdata.Parameters.Biped.m;
+    g = params(1);
+    m = params(2);
     G=[0;g.*m];
 end

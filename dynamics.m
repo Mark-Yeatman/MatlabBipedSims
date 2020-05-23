@@ -51,7 +51,9 @@ global flowdata
                 u_array(i+length(flowdata.Controls.Internal),:,:) = temp';
                 u_ext = u_ext + temp;
                 if any(isnan(temp)) || any(isinf(temp))
-                    warning('Bad control')
+                    if flowdata.Flags.warnings
+                        warning('Bad control')
+                    end
                 end
             end          
             
@@ -59,17 +61,23 @@ global flowdata
             if (rank(A) == min(size(A))) && (rank(A)<dim/2) && ~isempty(A)
                 Lambda = ((A/M)*A')\((A/M)*(u + u_ext - C*qdot - G) + Adot*qdot);
             elseif isempty(A)
-                warning("Biped is a projectile")
+                if flowdata.Flags.warnings
+                    warning("Biped is a projectile")
+                end
                 A = 0;
                 Lambda = 0;
             else
-                warning("Biped is possibly over constrained")
+                if flowdata.Flags.warnings
+                    warning("Biped is possibly over constrained")
+                end
                 Lambda = zeros(min(size(A)),1);
             end
             accel = M\( -C*qdot -G - A'*Lambda + u + u_ext);
             
             if any(isnan(accel))
-                warning('Got some nans in the dynamics')
+                if flowdata.Flags.warnings
+                    warning('Got some nans in the dynamics')
+                end
             end
             
             %set velocity, acceleration outputs

@@ -1,4 +1,4 @@
-function A = Adot_Flight_func(x)
+function A = Adot_Oscillate_func(x,params)
     %A_SSUPP_FUNC Summary of this function goes here
     %   Detailed explanation goes here
     global flowdata

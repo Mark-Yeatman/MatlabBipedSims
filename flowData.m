@@ -17,7 +17,8 @@ classdef flowData < handle
         Flags = struct('silent',true,...                            %display runtime outputs
                        'do_validation',true,...                     %validate impacts and other events
                        'terminate',false,...                        %terminate simulation early
-                       'step_done',false);                          %step is complete based on EndStep.event_name
+                       'step_done',false,...                          %step is complete based on EndStep.event_name
+                       'warnings',true);
 
         Impacts = {};     %impact cell array   
      

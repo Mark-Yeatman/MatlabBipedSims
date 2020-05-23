@@ -21,10 +21,11 @@ flowdata.Flags.warnings = false;
 flowdata.Parameters.dim = 4; %state variable dimension
 
 %Environment Parameters
-e = 1;
+e = 0.25;
 h = 0.75;
 flowdata.Parameters.Environment.e = e;
 flowdata.Parameters.Environment.h = h;
+flowdata.Parameters.Environment.name = "Stairs";
 
 %Biped Parameters
 m = 1.5;
@@ -42,7 +43,7 @@ flowdata.Parameters.Spring.L0 = L0;
 %Discrete Mappings 
 flowdata.setPhases({'Oscillate'})
 flowdata.setConfigs({})
-e1 = struct('name','Impact','nextphase','Oscillate','nextconfig','');
+e1 = struct('name','Impact_Stairs','nextphase','Oscillate','nextconfig','');
 flowdata.Phases.Oscillate.events = {e1};
 flowdata.End_Step.event_name = 'Impact';
 
@@ -53,7 +54,8 @@ flowdata.setImpacts();
 
 %ODE event initialization
 flowdata.tspan = 10; %seconds
-xi = [0,0.25,0,2];
+v = e*sqrt(2*g*h/(1-e^2));
+xi = [0,0,0,v];
 [fstate, xout, tout, out_extra] = walk(xi,2);
 
 basicplotsBall

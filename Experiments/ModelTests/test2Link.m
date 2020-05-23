@@ -39,7 +39,6 @@ flowdata.Parameters.Biped = containers.Map(params_keys,params_values);
 %Discrete Mappings and Constraints
 flowdata.setPhases({'SSupp'})
 flowdata.setConfigs({})
-impactlist =  {'FootStrike'};
 e1 = struct('name','FootStrike','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1};
 flowdata.End_Step.event_name = 'FootStrike';

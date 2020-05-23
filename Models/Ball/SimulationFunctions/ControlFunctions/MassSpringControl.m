@@ -3,8 +3,7 @@ function u = MassSpringControl(x)
     %   Creates mass-spring system
     global flowdata
     u = zeros(flowdata.Parameters.dim/2,1);
-    u(1) = -flowdata.Parameters.Spring.k*(x(1) - flowdata.Parameters.Spring.L0);
-    u = u + G_func(x);
+    u(2) = -flowdata.Parameters.Spring.k*(x(2) - flowdata.Parameters.Spring.L0);
     u = u(:); %makes sure its a column vector
 end
 
