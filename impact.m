@@ -12,8 +12,15 @@ global flowdata
             %for 'real' bipeds
             [xnext,F] = ImpactMap(xprev);    
             [xnext,valid_impact] = ImpactValidation(xprev,xnext,F,imp_name);
+        elseif isfield(flowdata.Parameters.Environment, 'e')
+            %for the bouncing ball
+            xnext = xprev;
+            if isfield(flowdata.Parameters.Environment,'name') && strcmp(flowdata.Parameters.Environment.name,'Stairs')
+                xnext(2) =  flowdata.Parameters.Environment.h;
+            end
+            xnext(4) = -flowdata.Parameters.Environment.e*xprev(4);
         else
-            %for the SLIP and bouncing ball 
+            %for the SLIP 
             xnext = xprev;
             [xnext,valid_impact] = ImpactValidation(xprev,xnext,imp_name);
         end            

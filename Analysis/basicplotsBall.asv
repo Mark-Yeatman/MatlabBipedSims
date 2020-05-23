@@ -7,13 +7,10 @@ figure('Name','Phase Portrait','NumberTitle','off')
 plot(xout(:,4),xout(:,2))
 hold on
 limits = axis;
-h = flowdata.Parameters.Environment.h;
-plot([limits(1),0],[0,0],'r--','LineWidth',3)
-%plot([0,limits(2)],[h,h],'g--','LineWidth',3)
+plot(
 title("Phase Portrait")
 xlabel('$\dot{y}$','Interpreter','latex')
 ylabel('$y$','Interpreter','latex')
-legend('Trajectory','Switching Surface')
 axis equal
 
 % figure('Name','Energies','NumberTitle','off')

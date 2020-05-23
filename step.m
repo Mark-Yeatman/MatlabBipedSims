@@ -56,10 +56,10 @@ global flowdata
         myprint('Step Done. \n \t ');        
         if isfield(out,'Eref')
             myprint(strcat('Length: ', num2str(out.steplength),' Speed: ',num2str(out.speed),' Eref: ', num2str(out.Eref(1)), '.\n'  ));
-        else
+        elseif isfield(out,'steplength')
             myprint(strcat('Length: ', num2str(out.steplength),' Speed: ',num2str(out.speed), '.\n'  ));
         end
-    else
+    elseif isempty(ie)  
         myprint('\nBiped did not impact the ground. '); 
     end
 
