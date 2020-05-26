@@ -1,6 +1,4 @@
 global flowdata
-%initial conditions and parameters from python code that is originally from
-%spong?
 
 flowdata = flowData;
 flowdata.E_func = @TotalE_func;
@@ -41,8 +39,3 @@ flowdata.odeoptions.Events = flowdata.Phases.SSupp.eventf;
 
 %Load more parameters and initial states
 load('MassInertiaGeometryCompass.mat')
-% thetas =  0.2256;
-% thetan = -0.3513;
-% w1 = -1.1231;
-% w2 = -0.2818;
-% xi = [0, 0, thetas, - thetas + thetan,       0, 0, w1 , -w1 + w2 ];

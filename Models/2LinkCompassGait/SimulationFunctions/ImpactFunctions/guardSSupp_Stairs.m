@@ -1,4 +1,4 @@
-function [value, isterminal, direction] = guardSSupp(t, x)
+function [value, isterminal, direction] = guardSSupp_Stairs(t, x)
 global flowdata  
     %Leading foot to ground angle
     clearance = swingFootClearance(x);

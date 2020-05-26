@@ -1,4 +1,4 @@
-function [value, isterminal, direction] = guard_FootStrike(t, x)  
+function [value, isterminal, direction] = guard_FootStrike_Slope(t, x)  
     %Leading foot to ground angle
     clearance = swingFootClearance(x);
 

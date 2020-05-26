@@ -1,68 +1,87 @@
-tic 
+clear all
+path(pathdef)
+addpath('Experiments\EnergyShapeAndTrack_Compass\Stairs\')
+addpath('UtilityFunctions\')
+addpath('Analysis\Plotting\')
+addpath(genpath('Models\2LinkCompassGait\'))
 
-%Experiment parameters
-%gain_list = [0.1,0.5,1,2,5,10,50,1000];
-gain_list = [10];
-scale = 1;
+global flowdata
 
-clear flowdata
-initializeCompassGaitLimitCycle_Stairs
+flowdata = flowData;
+flowdata.E_func = @TotalE_func;
+%ode equation handle and tolerenaces
+flowdata.eqnhandle = @dynamics;
+flowdata.odeoptions = odeset('RelTol', 1e-10, 'AbsTol', 1e-10);
 
-%Add Control Function
-flowdata.Controls.Internal = {@Shaping, @KPBC};
+%Flags
+flowdata.Flags.silent = false;
+flowdata.Flags.ignore = true;
+flowdata.Flags.do_validation = false;
 
-%Set parameters
-flowdata.Parameters.Shape.Mh = 10;
-flowdata.Parameters.Shape.Ms = 5;
-flowdata.Parameters.Shape.a = 0.5;
-flowdata.Parameters.Shape.b = 0.5;
-flowdata.Parameters.Shape.asvector = [10, 5, 0.5, 0.5]; 
+%Simulation parameters
+flowdata.Parameters.Environment.slope = -deg2rad(3.7);   %ground slope
+flowdata.Parameters.Environment.StairHeight = 0.037037176242425; %from goswami/spong compass gait limit cycle delta y
+g = 9.81;
+flowdata.Parameters.Environment.g = g;
+flowdata.Parameters.dim = 8;        %state variable dimension
+ 
+%Biped Parameters
+Mh = 10;
+Ms = 5;
+Isz = 0;
+a = 0.5;
+b = 0.5;
+params_keys = {'Mh', 'Ms', 'Isz', 'a', 'b', 'g'};
+params_values = {Mh, Ms, Isz, a, b, g};
+flowdata.Parameters.Biped = containers.Map(params_keys,params_values);
 
-flowdata.Parameters.KPBC.k = 10;
-flowdata.Parameters.KPBC.omega = diag([0,0,1,1]);
-flowdata.Parameters.KPBC.sat = inf;
-flowdata.Parameters.KPBC.Eref.SSupp = scale*flowdata.E_func(xi',[flowdata.Parameters.Shape.asvector, flowdata.Parameters.Environment.g]);
+%Constraints and Impacts
+flowdata.setPhases({'SSupp'})
+flowdata.setConfigs({})
 
-vector = boolean([0,0,1,1,0,0,1,1]);
+e1 = struct('name','FootStrike_Stairs','nextphase','SSupp','nextconfig','');
+flowdata.Phases.SSupp.events = {e1};
 
-flowdata.State.PE_datum = 0;
-[fstate, xout, tout, out_extra] = walk(xi.*vector,1);
+flowdata.End_Step.event_name = 'FootStrike_Stairs';
+flowdata.End_Step.map = @map_End_Step;
 
-p_com_0 = zeros(length(xout),3);
-v_com_0 = zeros(length(xout),3);
-for i = 1:length(xout)
-    p_com_0(i,:) = COM_pos_func(xout(i,:)');
-    v_com_0(i,:) = COM_vel_func(xout(i,:)');
+%Set initial phase, contact conditions, and state
+flowdata.State.c_phase = 'SSupp';
+flowdata.State.c_configs = {};
+flowdata.setImpacts();
+
+% This initial condition is from the biped with the same parameters except
+% on a slope instead of stairs. The stair height is the deltay from that
+% limit cycle. 
+%
+% For the stairs xi is on an unstable limit cycle that bifurcates into a 
+% stable period-2 gait versus the stable period 1 gait on the slope. 
+load('xi.mat')
+mask = boolean([0,0,1,1,0,0,1,1]);
+xi = mask.*xi;
+
+%Simulate unstable gait on stairs for 5 steps
+walk(xi,5);
+
+%Perturb and let converge to period 2
+flowdata.Flags.silent = true;
+perturb = mask.*rand(size(xi))*1e-3;
+[fstate, ~, ~, ~] = walk(xi+perturb,50);
+
+%Simulate period 2 gait
+flowdata.Flags.silent = false;
+[fstate, xout, tout, out_extra] = walk(fstate,4);
+
+%Look at the results
+videopath = 'Experiments\Videos\';
+prompt_in = input("Animate?: y/n \n","s");
+if strcmp(prompt_in,"y")
+    addpath('Analysis\Drawing\')
+    animate(@draw2Link,xout,tout,out_extra,1,strcat(videopath,'test2Link'))
 end
 
-for j = 1:length(gain_list)
-    
-    flowdata.Parameters.KPBC.k = gain_list(j);
-    flowdata.State.PE_datum = 0;
-    [fstate, xout, tout, out_extra] = walk(fstate.*vector,30);
-
-    flowdata.State.PE_datum = 0;
-    [fstate, xout, tout, out_extra] = walk(fstate.*vector,1);
-    
-    p_com_exp = zeros(length(xout),3);
-    v_com_exp = zeros(length(xout),3);
-    for i = 1:length(xout)
-        p_com_exp(i,:) = COM_pos_func(xout(i,:)');
-        v_com_exp(i,:) = COM_vel_func(xout(i,:)');
-    end
-    temp_exp_results{j}.p_com = p_com_exp;
-    temp_exp_results{j}.v_com = v_com_exp;
-    temp_exp_results{j}.gain = flowdata.Parameters.KPBC.k;
+prompt_in = input("Plots?: y/n \n","s");
+if strcmp(prompt_in,"y")
+    addpath('Analysis\Plotting\')
+    basicplots2Link
 end
-
-figure
-hold on
-legend_list = {};
-for j = 1:length(gain_list)
-    plot(temp_exp_results{j}.v_com(:,2), temp_exp_results{j}.p_com(:,2))
-    legend_list{j} = strcat('k = ', num2str(temp_exp_results{j}.gain));
-end
-legend(legend_list)
-xlabel('$\dot{y}$','Interpreter','latex')
-ylabel('$y$','Interpreter','latex')
-grid on

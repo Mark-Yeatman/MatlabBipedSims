@@ -23,12 +23,7 @@ global flowdata
           
             %Contact constraints 
             [A,Adot] = flowdata.getConstraintMtxs(x,params);
-
-            %Dynamics matrices
-%             M = M_func(x);
-%             C = C_func(x);
-%             G = G_func(x);           
-            
+           
             M = M_func(x,params);
             C = C_func(x,params);
             G = G_func(x,params); 

@@ -18,7 +18,8 @@ classdef flowData < handle
                        'do_validation',true,...                     %validate impacts and other events
                        'terminate',false,...                        %terminate simulation early
                        'step_done',false,...                          %step is complete based on EndStep.event_name
-                       'warnings',true);
+                       'warnings',true,...
+                       'rigid',true);
 
         Impacts = {};     %impact cell array   
      
@@ -89,29 +90,36 @@ classdef flowData < handle
            for i = 1:length(this.Phases.(phasename).events)
                name = this.Phases.(phasename).events{i}.name;
                this.Impacts{i}.name = name;
-               func_name = strcat('guard_',name);
-               this.Impacts{i}.f = str2func(func_name);  
+               guard_func_name = strcat('guard_',name);
+               this.Impacts{i}.f = str2func(guard_func_name);  
                this.Impacts{i}.nextphase = this.Phases.(phasename).events{i}.nextphase;
                this.Impacts{i}.nextconfig = this.Phases.(phasename).events{i}.nextconfig;
+               map_func_name = strcat('map_',name);
+               if exist(map_func_name) == 2
+                    this.Impacts{i}.map = str2func(map_func_name);  
+               else
+                    this.Impacts{i}.map = @this.identityImpact;  
+               end
            end
            for j = 1:length(this.State.c_configs)
                configname = this.State.c_configs{j};
                for i = 1:length(this.Configs.(configname).events)
                    name = this.Configs.(configname).events{i}.name;
                    this.Impacts{i}.name = name;
-                   func_name = strcat('guard_',name);
-                   this.Impacts{i}.f = str2func(func_name);
+                   guard_func_name = strcat('guard_',name);
+                   this.Impacts{i}.f = str2func(guard_func_name);
                    this.Impacts{i}.nextconfig = strcat('-',name);
                    this.Impacts{i}.nextphase = '';
+                   this.Impacts{i}.map = str2func(map_func_name); 
                end
            end
         end
-        function impact_name = setNextPhaseAndConfig(this,i_impact)
+        function [impact_name,map_funcs] = setNextPhaseAndConfig(this,i_impact)
             %setNextPhaseAndConfig 
             if 0<i_impact && i_impact<=length(this.Impacts)
                 impact_name = this.Impacts{i_impact}.name;
                 impact = this.Impacts{i_impact};
-                
+                map_funcs{1} = impact.map;
                 %maps to new phase
                 if ~isempty(impact.nextphase)
                     this.State.c_phase = impact.nextphase;
@@ -134,6 +142,7 @@ classdef flowData < handle
 
                 if strcmp(impact.name,this.End_Step.event_name)
                     this.Flags.step_done = true;
+                    map_funcs{end+1} = this.End_Step.map;
                 end
             else
                 impact_name = '';
@@ -165,6 +174,9 @@ classdef flowData < handle
         function resetFlags(this)
             this.Flags.terminate = false;
             this.Flags.step_done = false;
+        end
+        function xout = identityImpact(this,xprev,xnext)
+            xout = xnext;
         end
     end
 end

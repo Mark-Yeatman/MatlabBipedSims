@@ -2,7 +2,6 @@
 clear all
 path(pathdef)
 addpath('Experiments\ModelTests\')
-addpath('Analysis\')
 addpath('UtilityFunctions\')
 addpath(genpath('Models\2LinkCompassGait\'))
 
@@ -36,12 +35,15 @@ params_keys = {'Mh', 'Ms', 'Isz', 'a', 'b', 'g'};
 params_values = {Mh, Ms, Isz, a, b, g};
 flowdata.Parameters.Biped = containers.Map(params_keys,params_values);
 
-%Discrete Mappings and Constraints
+%Constraints and Impacts
 flowdata.setPhases({'SSupp'})
 flowdata.setConfigs({})
-e1 = struct('name','FootStrike','nextphase','SSupp','nextconfig','');
+
+e1 = struct('name','FootStrike_Slope','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1};
-flowdata.End_Step.event_name = 'FootStrike';
+
+flowdata.End_Step.event_name = 'FootStrike_Slope';
+flowdata.End_Step.map = @map_End_Step;
 
 %Set initial phase, contact conditions, and state
 flowdata.State.c_phase = 'SSupp';
@@ -49,15 +51,21 @@ flowdata.State.c_configs = {};
 flowdata.setImpacts();
 load('xi.mat')
 
-%ODE options 
-flowdata.Flags.do_validation = false;
+%Simulate
 walk(xi,3);
 
-flowdata.Flags.do_validation = false;
 [fstate, xout, tout, out_extra] = walk(xi,1);
 
+%Look at the results
 videopath = 'Experiments\Videos\';
 prompt_in = input("Animate?: y/n \n","s");
 if strcmp(prompt_in,"y")
+    addpath('Analysis\Drawing\')
     animate(@draw2Link,xout,tout,out_extra,1,strcat(videopath,'test2Link'))
+end
+
+prompt_in = input("Plots?: y/n \n","s");
+if strcmp(prompt_in,"y")
+    addpath('Analysis\Plotting\')
+    basicplots2Link
 end

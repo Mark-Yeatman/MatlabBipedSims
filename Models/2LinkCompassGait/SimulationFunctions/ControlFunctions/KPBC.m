@@ -14,7 +14,7 @@ global flowdata
     if isfield(flowdata.Parameters,'Eref_Update')
         Eref = flowdata.State.Eref;   
     else
-        Eref = flowdata.Parameters.KPBC.Eref.(phase);   
+        Eref = flowdata.Parameters.KPBC.Eref;   
     end
     
     qdot = x( dim/2+1 : dim );

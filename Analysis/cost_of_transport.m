@@ -8,8 +8,10 @@ function COT = cost_of_transport(x,tau,t,mtotal,g,d)
     % g = gravitational acceleration constant
     % d = COM travel distance over a step
     % from https://en.wikipedia.org/wiki/Cost_of_transport
-    dim = length(x)/2;
-    E = trapz(x(dim+1:end).*tau,t);
-    COT = E/(mtotal*g*d)
+    n = min(size(x))/2;
+    %using absolute values for force and velocity, basically assuming no
+    %regeneration
+    E = trapz(dot(abs(x(:,n+1:end)),abs(tau),2),t);
+    COT = E/(mtotal*g*d);
 end
 

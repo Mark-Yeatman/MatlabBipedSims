@@ -2,16 +2,15 @@ function xnext = impact(xprev,ie)
 %Handle discrete dynamics
 global flowdata
 
-    imp_name = flowdata.setNextPhaseAndConfig(ie(end));  
+    [imp_name,map_funcs] = flowdata.setNextPhaseAndConfig(ie(end));  
   
     if ~isempty(imp_name)
         %Display impact name
         myprint(strcat(imp_name,'-->'))
        
-        if flowdata.Parameters.dim >4
-            %for 'real' bipeds
-            [xnext,F] = ImpactMap(xprev);    
-            [xnext,valid_impact] = ImpactValidation(xprev,xnext,F,imp_name);
+        if flowdata.Flags.rigid
+            %for rigid link bipeds
+            [xnext,~] = RigidImpactMap(xprev);    
         elseif isfield(flowdata.Parameters.Environment, 'e')
             %for the bouncing ball
             xnext = xprev;
@@ -22,12 +21,14 @@ global flowdata
         else
             %for the SLIP 
             xnext = xprev;
-            [xnext,valid_impact] = ImpactValidation(xprev,xnext,imp_name);
         end            
-          
+        
+        for i=1:length(map_funcs)
+            xnext = map_funcs{i}(xprev,xnext);
+        end
     end           
 end
-function [xnext,F] = ImpactMap(xprev)
+function [xnext,F] = RigidImpactMap(xprev)
     %relabeling matrix
     global flowdata 
     dim = flowdata.Parameters.dim;
