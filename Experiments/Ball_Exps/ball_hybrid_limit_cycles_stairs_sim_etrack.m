@@ -1,7 +1,7 @@
 clear all
 path(pathdef)
 addpath('Experiments\Ball_Exps\')
-addpath('Analysis\')
+addpath('Analysis\Plotting\')
 addpath('UtilityFunctions\')
 addpath(genpath('Models\Ball\'))
 
@@ -21,10 +21,11 @@ flowdata.Flags.warnings = false;
 flowdata.Parameters.dim = 4; %state variable dimension
 
 %Environment Parameters
-e = 1;
-h = 0;
+e = 0.5;
+h = 1;
 flowdata.Parameters.Environment.e = e;
 flowdata.Parameters.Environment.h = h;
+flowdata.Parameters.Environment.name = "Stairs";
 
 %Biped Parameters
 m = 80;
@@ -41,14 +42,14 @@ flowdata.Parameters.Spring.L0 = L0;
 
 flowdata.Parameters.KPBC.k = 0.6;
 flowdata.Parameters.KPBC.omega = diag([0,1]);
-flowdata.Parameters.KPBC.Eref = 640;
+flowdata.Parameters.KPBC.Eref = 0;
 
 %Discrete Mappings 
 flowdata.setPhases({'Oscillate'})
 flowdata.setConfigs({})
-e1 = struct('name','Impact','nextphase','Oscillate','nextconfig','');
+e1 = struct('name','Impact_Stairs','nextphase','Oscillate','nextconfig','');
 flowdata.Phases.Oscillate.events = {e1};
-flowdata.End_Step.event_name = 'Impact';
+flowdata.End_Step.event_name = 'Impact_Stairs';
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'Oscillate';
@@ -56,18 +57,38 @@ flowdata.State.c_configs = {};
 flowdata.setImpacts();
 
 %ODE event initialization
+Enat = m*g*h/(1-e^2);
+vnat_post = e*sqrt(2*g*h/(1-e^2));
 flowdata.tspan = 10; %seconds
-
-v = 1.5;
+ 
 %Simulate
-xi = [0,h,0,v];
-fstate = xi;
-steps = 4;
-for i = 1:steps
-    E = flowdata.E_func(fstate');
-    [fstate, xout, tout, out_extra] = walk(fstate,1);
-    results{i} = {E,fstate,xout,tout,out_extra};
-    E_labels{i} = num2str(E);
+g_tilde = linspace(4,16,7);
+for i = 1:length(g_tilde)
+    g = g_tilde(i);
+    flowdata.Parameters.Environment.g = g;
+    flowdata.Parameters.Biped = containers.Map({'m','g'},{m,g});
+    flowdata.Parameters.KPBC.Eref =  m*g*h/(1-e^2);
+    v = e*sqrt(2*g*h/(1-e^2));
+    xi = [0,h,0,v];
+    [fstate, xout, tout, out_extra] = walk(xi,1);
+    results{i} = {flowdata.Parameters.KPBC.Eref,fstate,xout,tout,out_extra};
+    E_labels{i} = num2str(flowdata.Parameters.KPBC.Eref);
+    g_labels{i} = num2str(g);
 end
 
-save(strcat(pwd,'\Experiments\Ball_Exps\Data\Level_Ground_KPBC_Data'),'results','E_labels','h')
+steps = 4;
+g = 10;
+flowdata.Parameters.Environment.g = g;
+flowdata.Parameters.Biped = containers.Map({'m','g'},{m,g});
+flowdata.Parameters.KPBC.Eref =  m*g*h/(1-e^2);
+v = e*sqrt(2*6*h/(1-e^2));
+xi = [0,h,0,v];
+fstate = xi;
+for i = 1:steps
+    [fstate, xout, tout, out_extra] = walk(fstate,1);
+    results_off{i} = {flowdata.Parameters.KPBC.Eref,fstate,xout,tout,out_extra};
+    E_labels_off{i} = num2str(flowdata.Parameters.KPBC.Eref);
+    g_labels_off{i} = num2str(g);
+end
+save(strcat(pwd,'\Experiments\Ball_Exps\Data\Stairs_Etrack_Data'),...
+    'results','E_labels','g_labels','results_off','E_labels_off','g_labels_off','h')

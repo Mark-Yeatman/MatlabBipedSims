@@ -3,8 +3,8 @@ function [value, isterminal, direction] = guard_Impact(t, x)
     %   Detailed explanation goes here
     global flowdata
     h = flowdata.Parameters.Environment.h;
-    value = x(2) - h;
-    isterminal = x(4)>0;
+    value = x(2);
+    isterminal = x(4)<0;
     direction = 0;
 end
 

@@ -4,7 +4,7 @@ addpath('Analysis\')
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
-load limit_cycle_data.mat xi
+load limit_cycle_xi.mat xi
 
 global flowdata
 
@@ -17,6 +17,7 @@ flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
 %Flags
 flowdata.Flags.silent = false;
 flowdata.Flags.ignore = true;
+flowdata.Flags.warnings = false;
 
 %simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
@@ -51,4 +52,4 @@ flowdata.State.alpha = deg2rad(70); %spring impact angle
 flowdata.State.pf1 = [0.1251;0];
 flowdata.State.pf2 = [nan;nan];
 
-[fstate, xout, tout, out_extra] = walk(xi,3);
+[fstate, xout, tout, out_extra] = walk(xi,5);
