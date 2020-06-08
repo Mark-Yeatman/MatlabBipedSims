@@ -1,8 +1,6 @@
-%Uses the kinetic passivity based control, only tracking the kinetic energy
-%of the mass
 path(pathdef)
 addpath('Experiments\KPBC_SLIP\')
-addpath('Analysis\')
+addpath(genpath('Analysis\'))
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
@@ -20,6 +18,7 @@ flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
 flowdata.Flags.silent = false;
 flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
+flowdata.Flags.rigid = false;
 
 %simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
@@ -48,7 +47,9 @@ e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
+
 flowdata.End_Step.event_name = 'LeadStrike';
+flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'SSupp';
@@ -58,5 +59,5 @@ flowdata.State.alpha = deg2rad(70); %spring impact angle
 flowdata.State.pf1 = [0.1251;0];
 flowdata.State.pf2 = [nan;nan];
 
-flowdata.Parameters.State.Eref = flowdata.E_func(xi);
+flowdata.State.Eref = flowdata.E_func(xi);
 [fstate, xout, tout, out_extra] = walk(xi,5);

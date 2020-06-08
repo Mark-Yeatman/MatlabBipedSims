@@ -39,6 +39,8 @@ function animateSLIP(x, t, out_extra, timescale, moviename)
     fig = figure('Position', [left bottom width height],...
                  'Color','w',...
                  'DoubleBuffer','on');
+    set(fig,'KeyPressFcn',@key_press);
+    %disp("Press q, with the figure having focus, to gracefully stop the animation.")
     set(gca,'NextPlot','replace','Visible','off')
     camera_shift = [0,0];
     
@@ -179,7 +181,7 @@ function animateSLIP(x, t, out_extra, timescale, moviename)
             axis equal
             %axis off
             axis([xmin, xmax, ymin, ymax]);
-            drawnow limitrate
+            drawnow;
 
             % Add movie frames?
             if ~isempty(moviename)
@@ -187,5 +189,12 @@ function animateSLIP(x, t, out_extra, timescale, moviename)
                 writeVideo(mov,F);
             end
         end
+    end
+end
+
+function key_press(src,event)
+    global quit_animation
+    if strcmp(event.Key,'q')
+        quit_animation = true;
     end
 end

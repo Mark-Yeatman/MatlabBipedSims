@@ -95,7 +95,7 @@ classdef flowData < handle
                this.Impacts{i}.nextphase = this.Phases.(phasename).events{i}.nextphase;
                this.Impacts{i}.nextconfig = this.Phases.(phasename).events{i}.nextconfig;
                map_func_name = strcat('map_',name);
-               if exist(map_func_name) == 2
+               if exist(map_func_name,'file') == 2
                     this.Impacts{i}.map = str2func(map_func_name);  
                else
                     this.Impacts{i}.map = @this.identityImpact;  

@@ -60,7 +60,7 @@ global flowdata
             myprint(strcat('Length: ', num2str(out.steplength),' Speed: ',num2str(out.speed), '.\n'  ));
         end
     elseif isempty(ie)  
-        myprint('\nBiped did not impact the ground. '); 
+        myprint('\nBiped did not impact the ground. \n'); 
     end
 
 end

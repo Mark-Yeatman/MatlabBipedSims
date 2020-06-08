@@ -4,7 +4,7 @@ addpath(genpath('Analysis\'))
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
-load flight_limit_cycle_data.mat xi_flight
+load flight_cycle_6x6.mat xi_flight
 
 global flowdata
 
@@ -28,13 +28,16 @@ flowdata.Parameters.dim = 4;                           %state variable dimension
 flowdata.Parameters.Biped = containers.Map({'m'},{70});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func};
-flowdata.Parameters.SLIP.k = 8200;
-flowdata.Parameters.SLIP.L0 = 1;
+flowdata.Controls.Internal = {@SpringF_func,@KPBC_Combine};
+flowdata.Controls.External = {@Extra_Forces};
+flowdata.Parameters.SLIP.k = 30000;
+flowdata.Parameters.SLIP.L0 = 0.94;
 
-flowdata.Parameters.KPBC.k = 0; 
+flowdata.Parameters.KPBC.k = 0.1; 
 flowdata.Parameters.KPBC.sat = inf;
-flowdata.Parameters.State.Eref = flowdata.E_func(xi_flight);
+
+flowdata.Parameters.KPBCx.k = 0.1; 
+flowdata.Parameters.KPBCx.sat = inf;
 
 %Discrete Mappings 
 flowdata.setPhases({'SSupp','DSupp','Flight'})
@@ -57,10 +60,12 @@ flowdata.State.c_phase = 'SSupp';
 flowdata.State.c_configs = {};
 flowdata.setImpacts()
 
-flowdata.State.alpha = deg2rad(55); %spring impact angle 
+flowdata.State.alpha = deg2rad(70); %spring impact angle 
 
 flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.State.alpha),-sin(flowdata.State.alpha)];
 flowdata.State.pf1(2) = 0;
-flowdata.State.pf2 = nan;
-
-[fstate, xout, tout, out_extra] = walk(xi_flight,10);
+flowdata.State.pf2 = [nan;nan];
+flowdata.Parameters.State.Eref = flowdata.E_func(xi_flight);
+flowdata.Parameters.State.Erefx = KE_func(xi_flight);
+perturb = 0*[0;0;1;1];
+[fstate, xout, tout, out_extra] = walk(xi_flight+perturb',9);

@@ -51,7 +51,9 @@ global flowdata
                 
         %Entry into simulation 
         flowdata.Flags.step_done = false;
-        flowdata.State.PE_datum = xi(2);
+        if flowdata.Flags.rigid
+            flowdata.State.PE_datum = xi(2);
+        end
         [x_end, t_end, xstep, tstep, s_output] = step(xi);
         
        

@@ -1,8 +1,8 @@
-%Uses the kinetic passivity based control, only tracking the kinetic energy
-%of the mass
+%% Setup
+clear all
 path(pathdef)
 addpath('Experiments\KPBC_SLIP\')
-addpath('Analysis\')
+addpath(genpath('Analysis\'))
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
@@ -30,13 +30,10 @@ flowdata.Parameters.dim = 4;                           %state variable dimension
 flowdata.Parameters.Biped = containers.Map({'m'},{70}); %in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func, @KPBC_SpringAxis};
+flowdata.Controls.Internal = {@SpringF_func,@KPBC_SpringAxis};
 
-flowdata.Parameters.SLIP.k = 12250;
-flowdata.Parameters.SLIP.L0 = 0.94;
-
-flowdata.Parameters.KPBC.k = 1; 
-flowdata.Parameters.KPBC.sat = inf;
+flowdata.Parameters.KPBC.k = 0.01; 
+flowdata.Parameters.KPBC.sat = 1000;
 
 %Discrete Mappings 
 flowdata.setPhases({'SSupp','DSupp','Flight'})
@@ -46,20 +43,38 @@ e1 = struct('name','LeadStrike','nextphase','DSupp','nextconfig','');
 e2 = struct('name','TrailRelease','nextphase','SSupp','nextconfig','');
 e3 = struct('name','FullRelease','nextphase','Flight','nextconfig','');
 e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
-flowdata.Phases.SSupp.events = {e1,e3};
-flowdata.Phases.DSupp.events = {e2};
-flowdata.Phases.Flight.events = {e4};
+e5 = struct('name','ApexFlight','nextphase','Flight','nextconfig','');
+e6 = struct('name','Floor','nextphase','Failure','nextconfig','');
+e7 = struct('name','ApexSSupp','nextphase','SSupp','nextconfig','');
+flowdata.Phases.SSupp.events = {e1,e3,e6,e7};
+flowdata.Phases.DSupp.events = {e2,e6};
+flowdata.Phases.Flight.events = {e4,e5,e6};
 
-flowdata.End_Step.event_name = 'LeadStrike';
 flowdata.End_Step.map = @flowdata.identityImpact;
 
-%Set initial phase and contact conditions
+flowdata.tspan = 5;
+
+%% Walk
+disp("Walk")
 flowdata.State.c_phase = 'SSupp';
 flowdata.State.c_configs = {};
 flowdata.setImpacts()
 flowdata.State.alpha = deg2rad(70); %spring impact angle 
 flowdata.State.pf1 = [0.1251;0];
 flowdata.State.pf2 = [nan;nan];
+flowdata.Parameters.SLIP.k = 12250; 
+flowdata.Parameters.SLIP.L0 = 0.94;
+flowdata.End_Step.event_name = 'ApexSSupp';
+flowdata.State.Eref = flowdata.E_func(xi);
+[fstate, xout, tout, out_extra] = walk(xi,3);
 
-flowdata.Parameters.State.Eref = flowdata.E_func(xi);
-[fstate, xout, tout, out_extra] = walk(xi,5);
+%% Run
+if ~flowdata.Flags.terminate
+    load flight_cycle_6x6.mat xi_flight
+    flowdata.State.alpha = deg2rad(70);
+    flowdata.Parameters.SLIP.k = 30000;     
+    flowdata.State.Eref = 2.172726459658083e+06;
+    disp("Run")
+    flowdata.End_Step.event_name = 'FullRelease';
+    [fstate, xout, tout, out_extra] = walk(fstate,10);
+end

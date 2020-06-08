@@ -15,7 +15,7 @@ global flowdata
     if isfield(flowdata.State,'Einit')
         Work = flowdata.State.Einit;
     else
-        Work = 0;
+        Work = zeros(1,length(flowdata.Controls.External));
     end
 
     tplus = [0, tspan];

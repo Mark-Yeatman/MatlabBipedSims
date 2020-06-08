@@ -40,11 +40,11 @@ global flowdata
                 end
             end
 
-            u_ext = zeros(dim/2,1);
             for i = 1:length(flowdata.Controls.External)
-                temp = flowdata.Controls.External{i}(x);
-                u_array(i+length(flowdata.Controls.Internal),:,:) = temp';
-                u_ext = u_ext + temp;
+                u_ext = flowdata.Controls.External{i}(x);
+                u_array(i+length(flowdata.Controls.Internal),:,:) = u_ext';
+                %set external Power input
+                out(dim+i) = qdot' * u_ext;
                 if any(isnan(temp)) || any(isinf(temp))
                     if flowdata.Flags.warnings
                         warning('Bad control')
@@ -54,7 +54,7 @@ global flowdata
             
             %Constraint Multipliers and Joint accelerations
             if (rank(A) == min(size(A))) && (rank(A)<dim/2) && ~isempty(A)
-                Lambda = ((A/M)*A')\((A/M)*(u + u_ext - C*qdot - G) + Adot*qdot);
+                Lambda = ((A/M)*A')\((A/M)*(u  - C*qdot - G) + Adot*qdot);
             elseif isempty(A)
                 if flowdata.Flags.warnings
                     warning("Biped is a projectile")
@@ -67,7 +67,7 @@ global flowdata
                 end
                 Lambda = zeros(min(size(A)),1);
             end
-            accel = M\( -C*qdot -G - A'*Lambda + u + u_ext);
+            accel = M\( -C*qdot -G - A'*Lambda + u);
             
             if any(isnan(accel))
                 if flowdata.Flags.warnings
@@ -79,9 +79,6 @@ global flowdata
             out(1:dim/2) = qdot;
             out(dim/2+1:dim) = accel;        
             out = out';
-
-            %set external Power input
-            out(dim+1) = qdot' * u_ext;
      
             %Output torques
             if flag == 'u'

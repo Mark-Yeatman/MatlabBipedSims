@@ -1,6 +1,6 @@
 path(pathdef)
 addpath('Experiments\ModelTests\')
-addpath('Analysis\')
+addpath(genpath('Analysis\'))
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
@@ -18,6 +18,7 @@ flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
 flowdata.Flags.silent = false;
 flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
+flowdata.Flags.rigid = false;
 
 %simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
@@ -42,7 +43,9 @@ e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
+
 flowdata.End_Step.event_name = 'Landing';
+flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'SSupp';
@@ -50,6 +53,7 @@ flowdata.State.c_configs = {};
 flowdata.setImpacts()
 flowdata.State.alpha = deg2rad(55); %spring impact angle 
 flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.State.alpha),-sin(flowdata.State.alpha)];
+flowdata.State.pf1(2) = 0;
 flowdata.State.pf2 = nan;
 
 [fstate, xout, tout, out_extra] = walk(xi_flight,2);

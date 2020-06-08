@@ -1,8 +1,7 @@
-%Uses the kinetic passivity based control, only tracking the kinetic energy
-%of the mass
+clear all
 path(pathdef)
-addpath('Experiments')
-addpath('Analysis\')
+addpath('Experiments\KPBC_SLIP\')
+addpath(genpath('Analysis\'))
 addpath('UtilityFunctions\')
 addpath(genpath('Models\SLIP\'))
 
@@ -14,12 +13,13 @@ flowdata = flowData;
 flowdata.E_func = @TotalE_func;
 %ode equation handle and tolerenaces
 flowdata.eqnhandle = @dynamics;
-flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
+flowdata.odeoptions = odeset('RelTol', 1e-8, 'AbsTol', 1e-8);
 
 %Flags
 flowdata.Flags.silent = false;
 flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
+flowdata.Flags.rigid = false;
 
 %simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
@@ -29,13 +29,12 @@ flowdata.Parameters.dim = 4;                           %state variable dimension
 flowdata.Parameters.Biped = containers.Map({'m'},{70});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func, @KPBC_SpringAxis};
+flowdata.Controls.Internal = {@SpringF_func,@KPBC_SpringAxis};
 flowdata.Parameters.SLIP.k = 8200;
 flowdata.Parameters.SLIP.L0 = 1;
 
 flowdata.Parameters.KPBC.k = 1; 
 flowdata.Parameters.KPBC.sat = inf;
-flowdata.Parameters.State.Eref = flowdata.E_func(xi_flight);
 
 %Discrete Mappings 
 flowdata.setPhases({'SSupp','DSupp','Flight'})
@@ -45,17 +44,24 @@ e1 = struct('name','LeadStrike','nextphase','DSupp','nextconfig','');
 e2 = struct('name','TrailRelease','nextphase','SSupp','nextconfig','');
 e3 = struct('name','FullRelease','nextphase','Flight','nextconfig','');
 e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
-flowdata.Phases.SSupp.events = {e1,e3};
-flowdata.Phases.DSupp.events = {e2};
-flowdata.Phases.Flight.events = {e4};
+e6 = struct('name','Floor','nextphase','Failure','nextconfig','');
+flowdata.Phases.SSupp.events = {e1,e3,e6};
+flowdata.Phases.DSupp.events = {e2,e6};
+flowdata.Phases.Flight.events = {e4,e6};
+
 flowdata.End_Step.event_name = 'Landing';
+flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'SSupp';
 flowdata.State.c_configs = {};
 flowdata.setImpacts()
+
 flowdata.State.alpha = deg2rad(55); %spring impact angle 
+
 flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.State.alpha),-sin(flowdata.State.alpha)];
+flowdata.State.pf1(2) = 0;
 flowdata.State.pf2 = nan;
 
-[fstate, xout, tout, out_extra] = walk(xi_flight,2);
+flowdata.State.Eref = flowdata.E_func(xi_flight);
+[fstate, xout, tout, out_extra] = walk(xi_flight,10);

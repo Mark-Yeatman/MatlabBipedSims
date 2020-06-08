@@ -12,7 +12,7 @@ global flowdata
     phase = flowdata.State.c_phase;
 
     if strcmp(phase,'SSupp')
-        Eref = flowdata.Parameters.State.Eref;
+        Eref = flowdata.State.Eref;
         pf = flowdata.State.pf1;       
         Ldot = Spring_Velocity_func(x,pf);
         L = Spring_Length_func(x,pf);
@@ -26,7 +26,7 @@ global flowdata
         uArray = [u,nan(2,1)];
         Farray = [F,nan];
     elseif strcmp(phase,'DSupp')
-        Eref = flowdata.Parameters.State.Eref;
+        Eref = flowdata.State.Eref;
         pf1 = flowdata.State.pf1;       
         Ldot1 = Spring_Velocity_func(x,pf1);
         
@@ -59,6 +59,6 @@ global flowdata
         Farray = [nan,nan]; 
         uArray = nan(2,2);
     end
-    u(abs(u)<1e-1) = 0;
+    %u(abs(u)<1e-1) = 0;
 
 end

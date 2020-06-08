@@ -19,12 +19,11 @@ dim =4;
 %%Trajectories
 %State positions
 figure('Name','Positions','NumberTitle','off')
-subplot(2,2,1)
 plot(tout,xout(:,1),tout,xout(:,2))
 title('Positions')
 legend("x","y",'Location', 'eastoutside')
 
-subplot(2,2,2)
+figure('Name','Hip Trajectory','NumberTitle','off')
 plot(xout(:,1),xout(:,2))
 title('Hip Trajectory')
 xlabel('x')
@@ -34,12 +33,6 @@ F = reshape(out_extra.Force(1,1,:),[1,length(tout)]);
 L = reshape(out_extra.L1,[1,length(tout)]);
 GRF = reshape(out_extra.GRF(1,1,:),[1,length(tout)]);
 xrel = GRF.*L./F;
-
-subplot(2,2,3)
-plot(tout,xrel)
-title('Relative foot pos')
-xlabel('t')
-ylabel('x_{rel}')
 
 %State velocities
 figure('Name','Velocities','NumberTitle','off')
@@ -110,12 +103,12 @@ xlabel('Time')
 legend('Spring 1', 'Spring 2')
 
 subplot(2,2,4)
-Ebody = out_extra.PotentialEnergy + out_extra.KineticEnergy;
-plot(tout, Ebody)
+Eratio = (out_extra.PotentialEnergy+out_extra.SpringEnergy)/( out_extra.KineticEnergy+ out_extra.PotentialEnergy+ out_extra.SpringEnergy);
+plot(tout, Eratio)
 hold on 
 [sharedvals,idx] = intersect(tout,out_extra.t_impacts,"stable");
-plot(tout(idx),Ebody(idx),'*g')
-title('Body Energy')
+plot(tout(idx),Eratio(idx),'*g')
+title('Normalized Kinetic-Potential Ratio')
 ylabel('Joules')
 xlabel('Time')
 
@@ -239,3 +232,14 @@ xlabel("time")
 ylabel("N")
 legend("F_x1","F_y1","F_x2","F_y2");
 grid on
+
+%% Spring Lengths
+figure('Name','Spring Lengths','NumberTitle','off')
+plot(tout,out_extra.L1,'.',tout,out_extra.L2,'.')
+title('Spring Lengths')
+xlabel("time (s)")
+ylabel("L (m)")
+legend("L_1","L_2");
+grid on
+
+set(0,'DefaultFigureWindowStyle','normal')

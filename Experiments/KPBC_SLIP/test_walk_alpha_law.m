@@ -1,5 +1,4 @@
-%Uses the kinetic passivity based control, only tracking the kinetic energy
-%of the mass
+%This doesn't work right now
 path(pathdef)
 addpath('Experiments\KPBC_SLIP\')
 addpath('Analysis\')
@@ -46,7 +45,8 @@ e1 = struct('name','LeadStrike','nextphase','DSupp','nextconfig','');
 e2 = struct('name','TrailRelease','nextphase','SSupp','nextconfig','');
 e3 = struct('name','FullRelease','nextphase','Flight','nextconfig','');
 e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
-flowdata.Phases.SSupp.events = {e1,e3};
+e5 = struct('name','SpringApexSSupp','nextphase','SSupp','nextconfig','');
+flowdata.Phases.SSupp.events = {e1,e3,e5};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
 
@@ -62,4 +62,4 @@ flowdata.State.pf1 = [0.1251;0];
 flowdata.State.pf2 = [nan;nan];
 
 flowdata.Parameters.State.Eref = flowdata.E_func(xi);
-[fstate, xout, tout, out_extra] = walk(xi,5);
+[fstate, xout, tout, out_extra] = walk(xi,20);
