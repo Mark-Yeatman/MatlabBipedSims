@@ -32,14 +32,18 @@ global flowdata
        if contains(flowdata.State.c_phase,'Supp') 
             pf1 = flowdata.State.pf1;
             outputs.L1(i,1) = Spring_Length_func(y(i,:)',pf1);
+            outputs.L1dot(i,1) = Spring_Velocity_func(y(i,:)',pf1);
        else
             outputs.L1(i,1) = nan;
+            outputs.L1dot(i,1) = nan;
        end
        if strcmp(flowdata.State.c_phase,'DSupp') 
             pf2 = flowdata.State.pf2;
             outputs.L2(i,1) = Spring_Length_func(y(i,:)',pf2);
+            outputs.L2dot(i,1) = Spring_Velocity_func(y(i,:)',pf2);
        else
             outputs.L2(i,1) = nan;
+            outputs.L2dot(i,1) = nan;
        end
        
        %ODE Event Data

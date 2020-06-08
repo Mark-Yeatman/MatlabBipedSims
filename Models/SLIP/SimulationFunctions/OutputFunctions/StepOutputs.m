@@ -7,6 +7,8 @@ global flowdata
     outputs.KineticEnergy = [];
     outputs.PotentialEnergy = [];
     outputs.SpringEnergy = [];    
+    outputs.L1dot = [];
+    outputs.L2dot = [];
     outputs.L1 = [];
     outputs.L2 = [];
     outputs.Force = [];
@@ -25,6 +27,8 @@ global flowdata
         outputs.SpringEnergy = [outputs.SpringEnergy; data{1}.SpringEnergy];   
         outputs.L1 = [outputs.L1; data{1}.L1];  
         outputs.L2 = [outputs.L2; data{1}.L2];  
+        outputs.L1dot = [outputs.L1dot; data{1}.L1dot];  
+        outputs.L2dot = [outputs.L2dot; data{1}.L2dot];  
         outputs.Force = cat(3,outputs.Force,data{1}.Force);
         outputs.GRF = cat(3,outputs.GRF,data{1}.GRF);
         
