@@ -13,7 +13,7 @@ flowdata = flowData;
 flowdata.E_func = @TotalE_func;
 %ode equation handle and tolerenaces
 flowdata.eqnhandle = @dynamics;
-flowdata.odeoptions = odeset('RelTol', 1e-8, 'AbsTol', 1e-8);
+flowdata.odeoptions = odeset('RelTol', 1e-12, 'AbsTol', 1e-12);
 
 %Flags
 flowdata.Flags.silent = false;

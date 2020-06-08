@@ -42,7 +42,9 @@ e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
+
 flowdata.End_Step.event_name = 'LeadStrike';
+flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'SSupp';

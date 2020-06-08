@@ -10,7 +10,7 @@ global flowdata
     num_cntrs = length(flowdata.Controls.Internal) + length(flowdata.Controls.External);
     outputs.Force = zeros(num_cntrs , dim/2, length(t));
     outputs.GRF = zeros(2, 2, length(t)); %x/y, Leg , time
-
+    bipparams = cell2mat(flowdata.Parameters.Biped.values);
     for i = 1:length(t)
        outputs.COM_Force(i,:) = flowdata.eqnhandle(t(i),y(i,:)','u');
        outputs.KineticEnergy(i,:) = KE_func(y(i,:)');
