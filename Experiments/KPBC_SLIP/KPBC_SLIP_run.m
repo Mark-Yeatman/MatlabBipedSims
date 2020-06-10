@@ -35,6 +35,7 @@ flowdata.Parameters.SLIP.L0 = 1;
 
 flowdata.Parameters.KPBC.k = 1; 
 flowdata.Parameters.KPBC.sat = inf;
+flowdata.Parameters.State.Eref = flowdata.E_func(xi_flight);
 
 %Discrete Mappings 
 flowdata.setPhases({'SSupp','DSupp','Flight'})
@@ -56,9 +57,7 @@ flowdata.End_Step.map = @flowdata.identityImpact;
 flowdata.State.c_phase = 'SSupp';
 flowdata.State.c_configs = {};
 flowdata.setImpacts()
-
 flowdata.State.alpha = deg2rad(55); %spring impact angle 
-
 flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.State.alpha),-sin(flowdata.State.alpha)];
 flowdata.State.pf1(2) = 0;
 flowdata.State.pf2 = nan;

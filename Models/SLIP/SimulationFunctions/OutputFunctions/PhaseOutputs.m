@@ -10,12 +10,12 @@ global flowdata
     num_cntrs = length(flowdata.Controls.Internal) + length(flowdata.Controls.External);
     outputs.Force = zeros(num_cntrs , dim/2, length(t));
     outputs.GRF = zeros(2, 2, length(t)); %x/y, Leg , time
-
+    bipparams = cell2mat(flowdata.Parameters.Biped.values);
     for i = 1:length(t)
        outputs.COM_Force(i,:) = flowdata.eqnhandle(t(i),y(i,:)','u');
-       outputs.KineticEnergy(i,:) = KE_func(y(i,:)');
-       outputs.PotentialEnergy(i,:) = PE_func(y(i,:)');
-       outputs.SpringEnergy(i,:) = SpringE_func(y(i,:)');
+       outputs.KineticEnergy(i,:) = 0;%KE_func(y(i,:)');
+       outputs.PotentialEnergy(i,:) = 0;%PE_func(y(i,:)');
+       outputs.SpringEnergy(i,:) = 0;%SpringE_func(y(i,:)');
        
        %Control Forces
        for j = 1:length(flowdata.Controls.Internal)
@@ -32,14 +32,18 @@ global flowdata
        if contains(flowdata.State.c_phase,'Supp') 
             pf1 = flowdata.State.pf1;
             outputs.L1(i,1) = Spring_Length_func(y(i,:)',pf1);
+            outputs.L1dot(i,1) = Spring_Velocity_func(y(i,:)',pf1);
        else
             outputs.L1(i,1) = nan;
+            outputs.L1dot(i,1) = nan;
        end
        if strcmp(flowdata.State.c_phase,'DSupp') 
             pf2 = flowdata.State.pf2;
             outputs.L2(i,1) = Spring_Length_func(y(i,:)',pf2);
+            outputs.L2dot(i,1) = Spring_Velocity_func(y(i,:)',pf2);
        else
             outputs.L2(i,1) = nan;
+            outputs.L2dot(i,1) = nan;
        end
        
        %ODE Event Data

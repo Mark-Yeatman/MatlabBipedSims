@@ -26,10 +26,10 @@ flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
 flowdata.Parameters.dim = 4;                           %state variable dimension
  
 %Biped Parameters
-flowdata.Parameters.Biped = containers.Map({'m'},{70});
+flowdata.Parameters.Biped = containers.Map({'m','g'},{70,9.81});
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func};
+flowdata.Controls.Internal = {@Spring_func};
 flowdata.Parameters.SLIP.k = 12250;
 flowdata.Parameters.SLIP.L0 = 0.94;
 

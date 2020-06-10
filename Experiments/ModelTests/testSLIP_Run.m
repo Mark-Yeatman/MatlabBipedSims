@@ -20,15 +20,15 @@ flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
 flowdata.Flags.rigid = false;
 
-%simulation parameters
+%Simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
 flowdata.Parameters.dim = 4;                           %state variable dimension
  
 %Biped Parameters
-flowdata.Parameters.Biped = containers.Map({'m'},{70});%in kg
+flowdata.Parameters.Biped = containers.Map({'m','g'},{70,9.81});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func};
+flowdata.Controls.Internal = {@Spring_func};
 flowdata.Parameters.SLIP.k = 8200;
 flowdata.Parameters.SLIP.L0 = 1;
 
@@ -43,7 +43,6 @@ e4 = struct('name','Landing','nextphase','SSupp','nextconfig','');
 flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
-
 flowdata.End_Step.event_name = 'Landing';
 flowdata.End_Step.map = @flowdata.identityImpact;
 
