@@ -26,7 +26,7 @@ global flowdata
            
             M = M_func(x,params);
             C = C_func(x,params);
-            G = 0*G_func(x,params); 
+            G = G_func(x,params); 
             
             %Control Functions
             u = zeros(dim/2,1);

@@ -26,12 +26,14 @@ flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
 flowdata.Parameters.dim = 4;                           %state variable dimension
  
 %Biped Parameters
-flowdata.Parameters.Biped = containers.Map({'m'},{70});%in kg
+flowdata.Parameters.Biped = containers.Map({'m','g'},{70,9.81});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func,@GravL_func}; %{@SpringF_func,@KPBC_SpringAxis};
+flowdata.Controls.Internal = {@Spring_func,@Shaping_func}; %{@SpringF_func,@KPBC_SpringAxis};
 flowdata.Parameters.SLIP.k = 8200;
 flowdata.Parameters.SLIP.L0 = 1;
+
+flowdata.Parameters.Shaping.g = 0.5*9.81;
 
 flowdata.Parameters.KPBC.k = 1; 
 flowdata.Parameters.KPBC.sat = inf;
@@ -63,5 +65,4 @@ flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.
 flowdata.State.pf1(2) = 0;
 flowdata.State.pf2 = nan;
 
-flowdata.State.Eref = flowdata.E_func(xi_flight);
 [fstate, xout, tout, out_extra] = walk(xi_flight,10);

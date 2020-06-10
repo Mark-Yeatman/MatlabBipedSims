@@ -20,7 +20,7 @@ flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
 flowdata.Flags.rigid = false;
 
-%simulation parameters
+%Simulation parameters
 flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
 flowdata.Parameters.dim = 4;                           %state variable dimension
  
@@ -44,8 +44,10 @@ flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
 
+%Terminal Event
 flowdata.End_Step.event_name = 'Landing';
 flowdata.End_Step.map = @flowdata.identityImpact;
+
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'SSupp';
 flowdata.State.c_configs = {};

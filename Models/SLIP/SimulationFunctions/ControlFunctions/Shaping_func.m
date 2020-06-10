@@ -1,20 +1,24 @@
-function [u,Farray,uArray] = GravL_func(x)
+function [u,Farray,uArray] = Shaping_func(x)
     %SPRING Computes spring force in the SLIP model
     %   Takes state vector as input and checks the phase in flowdata.State.c_phase
     global flowdata
     
     k = flowdata.Parameters.SLIP.k;
     L0 = flowdata.Parameters.SLIP.L0;
+    
     m = flowdata.Parameters.Biped('m');
     g = flowdata.Parameters.Environment.g;
+    
+    gd = flowdata.Parameters.Shaping.g;
+    
+    
     if strcmp(flowdata.State.c_phase,"SSupp")
         z = XYtoLTheta(x,flowdata.State.pf1);
         theta = z(2);
         dtheta = z(4);
         pf = flowdata.State.pf1;
         L = Spring_Length_func(x,pf);
-        %F = -m*g*sin(theta)  + m*g;
-        F = - L*m*dtheta^2 - g*m*0.5 + g*m*sin(theta);
+        F = - L*m*dtheta^2 + g*m*sin(theta) - gd*m;
         u(1) = F*( x(1) - flowdata.State.pf1(1))/L;
         u(2) = F*( x(2) - flowdata.State.pf1(2))/L;
         u = u(:); %makes sure its a column vector

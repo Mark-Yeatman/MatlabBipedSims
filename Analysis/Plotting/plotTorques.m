@@ -7,7 +7,8 @@ for i = 1:I
         F = squeeze(out_extra.Force(i,j,:));
         plot(tout,F)
         hold on
-        legendstrs{end+1} = strcat(func2str(flowdata.Controls.Internal{i}),cords{j});
+        fname  = replace(func2str(flowdata.Controls.Internal{i}),"_func"," ");
+        legendstrs{end+1} = strcat(fname,cords{j});
     end
 end
 legend(legendstrs)

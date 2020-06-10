@@ -13,9 +13,9 @@ global flowdata
     bipparams = cell2mat(flowdata.Parameters.Biped.values);
     for i = 1:length(t)
        outputs.COM_Force(i,:) = flowdata.eqnhandle(t(i),y(i,:)','u');
-       outputs.KineticEnergy(i,:) = KE_func(y(i,:)');
-       outputs.PotentialEnergy(i,:) = PE_func(y(i,:)');
-       outputs.SpringEnergy(i,:) = SpringE_func(y(i,:)');
+       outputs.KineticEnergy(i,:) = 0;%KE_func(y(i,:)');
+       outputs.PotentialEnergy(i,:) = 0;%PE_func(y(i,:)');
+       outputs.SpringEnergy(i,:) = 0;%SpringE_func(y(i,:)');
        
        %Control Forces
        for j = 1:length(flowdata.Controls.Internal)

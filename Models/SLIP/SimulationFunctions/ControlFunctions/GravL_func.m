@@ -10,10 +10,11 @@ function [u,Farray,uArray] = GravL_func(x)
     if strcmp(flowdata.State.c_phase,"SSupp")
         z = XYtoLTheta(x,flowdata.State.pf1);
         theta = z(2);
+        dtheta = z(4);
         pf = flowdata.State.pf1;
         L = Spring_Length_func(x,pf);
         %F = -m*g*sin(theta)  + m*g;
-        F = - m*g;
+        F = - L*m*dtheta^2 - g*m*0.5 + g*m*sin(theta);
         u(1) = F*( x(1) - flowdata.State.pf1(1))/L;
         u(2) = F*( x(2) - flowdata.State.pf1(2))/L;
         u = u(:); %makes sure its a column vector
