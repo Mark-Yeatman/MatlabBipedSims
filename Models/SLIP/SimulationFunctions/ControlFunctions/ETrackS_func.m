@@ -32,6 +32,7 @@ global flowdata
         Farray = [nan,nan]; 
         uArray = nan(2,2);
     end
-    %u(abs(u)<1e-1) = 0;
+    ee = 1;
+    u(abs(u)<ee) = 0;
 
 end

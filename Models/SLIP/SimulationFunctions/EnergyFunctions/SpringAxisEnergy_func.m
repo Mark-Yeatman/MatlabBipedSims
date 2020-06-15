@@ -13,7 +13,7 @@ function E = SpringAxisEnergy_func(x,pf)
     if ~isnan(pf)
         L = Spring_Length_func(x,pf);
         Ldot = Spring_Velocity_func(x,pf);
-        E = 1/2*m*Ldot^2 + m*g*L + 1/2*k*(L-L0);
+        E = 1/2*m*Ldot^2 + 1/2*k*(L-L0+m*g/k)^2;
     else
         E=0;
     end
