@@ -53,6 +53,7 @@ flowdata.setImpacts()
 flowdata.State.alpha = deg2rad(55); %spring impact angle 
 flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.State.alpha),-sin(flowdata.State.alpha)];
 flowdata.State.pf1(2) = 0;
-flowdata.State.pf2 = nan;
+flowdata.State.pf1 = flowdata.State.pf1(:);
+flowdata.State.pf2 = nan(2,1);
 
-[fstate, xout, tout, out_extra] = walk(xi_flight,2);
+[fstate, xout, tout, out_extra] = walk(xi_flight,1);

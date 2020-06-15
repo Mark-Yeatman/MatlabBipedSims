@@ -6,16 +6,17 @@ function E = SpringAxisEnergy_func(x,pf)
     global flowdata
     
     m = flowdata.Parameters.Biped('m');
-    k = flowdata.Parameters.SLIP.k;
-    g = flowdata.Parameters.Environment.g;
+    k = flowdata.Parameters.Shaping.k;
+    g = flowdata.Parameters.Shaping.g;
     L0 = flowdata.Parameters.SLIP.L0;
-    E = 0;
     
     if ~isnan(pf)
-        L1 = Spring_Length_func(x,flowdata.State.pf1)
-        E = 
+        L = Spring_Length_func(x,pf);
+        Ldot = Spring_Velocity_func(x,pf);
+        E = 1/2*m*Ldot^2 + m*g*L + 1/2*k*(L-L0);
+    else
+        E=0;
     end
-    if
-        E = 1/2*m*
+
 end
 

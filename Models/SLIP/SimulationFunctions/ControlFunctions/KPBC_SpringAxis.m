@@ -7,8 +7,8 @@ global flowdata
     %omega = flowdata.Parameters.KPBC.omega;
     k = flowdata.Parameters.KPBC.k;  
     sat = flowdata.Parameters.KPBC.sat;
-    
-    GenE = flowdata.E_func(x');
+    params = cell2mat(flowdata.Parameters.Biped.values);
+    E = flowdata.E_func(x,params,flowdata.State.pf1,flowdata.State.pf2);
     phase = flowdata.State.c_phase;
 
     if strcmp(phase,'SSupp')
@@ -17,7 +17,7 @@ global flowdata
         Ldot = Spring_Velocity_func(x,pf);
         L = Spring_Length_func(x,pf);
         
-        F = -k*(GenE - Eref)*Ldot;
+        F = -k*(E - Eref)*Ldot;
         F(abs(F)>sat) = sign(F(abs(F)>sat)) * sat;        
         
         u(1) = F*( x(1) - pf(1))/L;
@@ -32,7 +32,7 @@ global flowdata
         
         L1 = Spring_Length_func(x,pf1);
 
-        F1 = -k*(GenE - Eref)*Ldot1; %turn off front leg KPBC during DSupp
+        F1 = -k*(E - Eref)*Ldot1; %turn off front leg KPBC during DSupp
         F1(abs(F1)>sat) = sign(F1(abs(F1)>sat)) * sat;        
         
         u1(1) = F1*( x(1) - flowdata.State.pf1(1))/L1;
@@ -44,7 +44,7 @@ global flowdata
         
         L2 = Spring_Length_func(x,pf2);
     
-        F2 = -k*(GenE - Eref)*Ldot2;
+        F2 = -k*(E - Eref)*Ldot2;
         F2(abs(F2)>sat) = sign(F2(abs(F2)>sat)) * sat;        
         
         u2(1) = F2*( x(1) - flowdata.State.pf2(1))/L2;

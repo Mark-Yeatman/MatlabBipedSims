@@ -25,10 +25,10 @@ flowdata.Parameters.Environment.slope = deg2rad(0);    %ground slope in rads
 flowdata.Parameters.dim = 4;                           %state variable dimension
  
 %Biped Parameters
-flowdata.Parameters.Biped = containers.Map({'m'},{70});%in kg
+flowdata.Parameters.Biped = containers.Map({'m','g'},{70,9.81});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@SpringF_func};
+flowdata.Controls.Internal = {@Spring_func};
 flowdata.Parameters.SLIP.k = 30000;
 flowdata.Parameters.SLIP.L0 = 0.94;
 
@@ -46,7 +46,7 @@ flowdata.Phases.SSupp.events = {e1,e3,e6};
 flowdata.Phases.DSupp.events = {e2,e6};
 flowdata.Phases.Flight.events = {e4,e5,e6};
 
-flowdata.End_Step.event_name = 'ApexFlight';
+flowdata.End_Step.event_name = 'Landing';
 flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
@@ -60,4 +60,4 @@ x_apex = [0,flowdata.Parameters.SLIP.L0*2,5,0];
 flowdata.State.pf1 = [nan;0];
 flowdata.State.pf2 = [nan;nan];
 
-[fstate, xout, tout, out_extra] = walk(x_apex,10);
+[fstate, xout, tout, out_extra] = walk(x_apex,12);

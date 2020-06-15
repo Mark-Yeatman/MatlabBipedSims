@@ -23,8 +23,8 @@ function xout = map_FullRelease(xprev,xnext)
         end
     end
     flowdata.State.pf1(1) = nan;
-    flowdata.State.pf2 = nan;  
-    flowdata.Parameters.State.Key_Landing = KEy_func(xnext);
+    flowdata.State.pf2 = nan(2,1);  
+    %flowdata.Parameters.State.Key_Landing = KEy_func(xnext);
     xout = xnext;   
 end
 

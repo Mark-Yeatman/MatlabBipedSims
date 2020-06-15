@@ -6,14 +6,14 @@ function [u,Farray,uArray] = Spring_func(x)
     k = flowdata.Parameters.SLIP.k;
     L0 = flowdata.Parameters.SLIP.L0;
     dim = flowdata.Parameters.dim;
+ 
     params = [L0,k];
     x = x(1:dim);
     W = x(dim+1:end);
     if strcmp(flowdata.State.c_phase,"SSupp")
         pf = flowdata.State.pf1(:);      
-        s = [x;pf];
-        F = Spring_Force_func(s,params);
-        J = Spring_Jacobian_func(s,params);
+        F = Spring_Force_func(x,pf,params);
+        J = Spring_Jacobian_func(x,pf);
         u = J*F; %makes sure its a column vector
         
         Farray = [F,nan];
@@ -22,15 +22,14 @@ function [u,Farray,uArray] = Spring_func(x)
     elseif strcmp(flowdata.State.c_phase,"DSupp")
         %pf1 is leading foot during double support
         pf1 = flowdata.State.pf1(:);      
-        s1 = [x;pf1];
-        F1 = Spring_Force_func(s1,params);
-        J1 = Spring_Jacobian_func(s1,params);
+   
+        F1 = Spring_Force_func(x,pf1,params);
+        J1 = Spring_Jacobian_func(x,pf1);
         u1 = J1*F1; %makes sure its a column vector
         
         pf2 = flowdata.State.pf2(:);      
-        s2 = [x;pf2];
-        F2 = Spring_Force_func(s2,params);
-        J2 = Spring_Jacobian_func(s2,params);
+        F2 = Spring_Force_func(x,pf2,params);
+        J2 = Spring_Jacobian_func(x,pf2);
         u2 = J2*F2; %makes sure its a column vector
         
         u = u1+u2;

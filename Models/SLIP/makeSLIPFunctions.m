@@ -25,9 +25,7 @@ function makeSLIPFunctions()
     spring_params = [temp{:}]; %gets the ordering right   
     
     x = sym('x',[4,1]);   
-    
-    s = [x;xf;yf];
-    
+       
     M_matrix
     C_matrix
     G_matrix
@@ -38,7 +36,7 @@ function makeSLIPFunctions()
     matlabFunction(M,   'File',strcat(folder,'M_func'),'Vars',{x,biped_params})
     matlabFunction(sym(Cmat),'File',strcat(folder,'C_func'),'Vars',{x,biped_params})
     matlabFunction(G,   'File',strcat(folder,'G_func'),'Vars',{x,biped_params})
-    matlabFunction(Fval,   'File',strcat(folder,'Spring_Force_func'),'Vars',{s,spring_params})
+    matlabFunction(Fval,   'File',strcat(folder,'Spring_Force_func'),'Vars',{x,[xf;yf],spring_params})
     
     Kinetic_energy
     Potential_energy
@@ -48,7 +46,6 @@ function makeSLIPFunctions()
     status = mkdir(folder);
     matlabFunction(ke,'File',strcat(folder,'KE_func'),'Vars',{x,biped_params})
     matlabFunction(Pe,'File',strcat(folder,'PE_func'),'Vars',{x,biped_params})
-    matlabFunction(pespring,'File',strcat(folder,'PE_func'),'Vars',{s,spring_params})
     
     Spring_Length
     Spring_Velocity
@@ -56,8 +53,8 @@ function makeSLIPFunctions()
     
     folder = strcat(configFolder,'\SimulationFunctions\KinematicFunctions\');
     status = mkdir(folder);
-    matlabFunction(l,  'File',strcat(folder,'Spring_Length_func'),'Vars',{s,spring_params})
-    matlabFunction(ldot,  'File',strcat(folder,'Spring_Velocity_func'),'Vars',{s,spring_params})
-    matlabFunction(jacob,'File',strcat(folder,'Spring_Jacobian_func'),'Vars',{s,spring_params})
+    matlabFunction(l,  'File',strcat(folder,'Spring_Length_func'),'Vars',{x,[xf;yf]})
+    matlabFunction(ldot,  'File',strcat(folder,'Spring_Velocity_func'),'Vars',{x,[xf;yf]})
+    matlabFunction(jacob,'File',strcat(folder,'Spring_Jacobian_func'),'Vars',{x,[xf;yf]})
      
 end

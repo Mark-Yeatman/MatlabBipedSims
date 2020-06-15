@@ -45,7 +45,7 @@ flowdata.Phases.SSupp.events = {e1,e3};
 flowdata.Phases.DSupp.events = {e2};
 flowdata.Phases.Flight.events = {e4};
 
-flowdata.End_Step.event_name = 'LeadStrike';
+flowdata.End_Step.event_name = 'TrailRelease';
 flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
@@ -54,6 +54,6 @@ flowdata.State.c_configs = {};
 flowdata.setImpacts()
 flowdata.State.alpha = deg2rad(70); %spring impact angle 
 flowdata.State.pf1 = [0.1251;0];
-flowdata.State.pf2 = [nan;nan];
+flowdata.State.pf2 = nan(2,1);
 
-[fstate, xout, tout, out_extra] = walk(xi,5);
+[fstate, xout, tout, out_extra] = walk(xi,1);
