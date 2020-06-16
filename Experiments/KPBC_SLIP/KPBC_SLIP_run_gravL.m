@@ -35,7 +35,7 @@ flowdata.Parameters.SLIP.L0 = 0.94;
 
 s = 1;
 flowdata.Parameters.Shaping.g = -29.0684;
-flowdata.Parameters.Shaping.k = 3.9253e+04*0.95;
+flowdata.Parameters.Shaping.k = 3.9253e+04;
 
 flowdata.Parameters.KPBC.k = 0; 
 flowdata.Parameters.KPBC.sat = inf;
@@ -67,6 +67,11 @@ flowdata.State.pf1 = xi_flight(1:2) + flowdata.Parameters.SLIP.L0*[cos(flowdata.
 flowdata.State.pf1(2) = 0;
 flowdata.State.pf1 = flowdata.State.pf1(:);
 flowdata.State.pf2 = nan(2,1);
-flowdata.State.Eref = SpringAxisEnergy_func(xi_flight',flowdata.State.pf1)*1;
+flowdata.State.Eref = SpringAxisEnergy_func(xi_flight',flowdata.State.pf1);
 
+z = XYtoLTheta(xi_flight',flowdata.State.pf1);
+deltatheta = 0.0;
+deltaxdot = -deltatheta*z(1)*sin(z(2)); 
+deltaydot = deltatheta*z(1)*cos(z(2)); 
+xi_flight = xi_flight + [0;0;deltaxdot;deltaydot]';
 [fstate, xout, tout, out_extra] = walk(xi_flight,10);
