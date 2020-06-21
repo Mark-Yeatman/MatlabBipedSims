@@ -29,7 +29,7 @@ flowdata.Parameters.dim = 4;                           %state variable dimension
 flowdata.Parameters.Biped = containers.Map({'m','g'},{70,9.81});%in kg
 
 %Control and Parameters
-flowdata.Controls.Internal = {@Spring_func,@Shaping_func,@ETrackS_func}; %{@SpringF_func,@KPBC_SpringAxis};
+flowdata.Controls.Internal = {@Spring_func,@Shaping_func};%,@ETrackS_func}; %{@SpringF_func,@KPBC_SpringAxis};
 flowdata.Parameters.SLIP.k = 30000;
 flowdata.Parameters.SLIP.L0 = 0.94;
 
@@ -37,8 +37,8 @@ s = 1;
 flowdata.Parameters.Shaping.g = -29.0684;
 flowdata.Parameters.Shaping.k = 3.9253e+04;
 
-flowdata.Parameters.KPBC.k = 0; 
-flowdata.Parameters.KPBC.sat = inf;
+% flowdata.Parameters.KPBC.k = 0.0; 
+% flowdata.Parameters.KPBC.sat = inf;
 
 %Discrete Mappings 
 flowdata.setPhases({'SSupp','DSupp','Flight'})
@@ -68,10 +68,14 @@ flowdata.State.pf1(2) = 0;
 flowdata.State.pf1 = flowdata.State.pf1(:);
 flowdata.State.pf2 = nan(2,1);
 flowdata.State.Eref = SpringAxisEnergy_func(xi_flight',flowdata.State.pf1);
+flowdata.State.dtheta_ref = -6.4490;
+
+flowdata.State.A0 = 0.1290;
 
 z = XYtoLTheta(xi_flight',flowdata.State.pf1);
-deltatheta = 0.0;
-deltaxdot = -deltatheta*z(1)*sin(z(2)); 
-deltaydot = deltatheta*z(1)*cos(z(2)); 
+deltadtheta = 1;
+deltaxdot = -deltadtheta*z(1)*sin(z(2)); 
+deltaydot = deltadtheta*z(1)*cos(z(2)); 
+flowdata.State.z_prev = [0,deg2rad(110),0,-6.4490+deltadtheta ];
 xi_flight = xi_flight + [0;0;deltaxdot;deltaydot]';
 [fstate, xout, tout, out_extra] = walk(xi_flight,10);
