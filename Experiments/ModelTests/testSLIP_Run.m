@@ -56,4 +56,4 @@ flowdata.State.pf1(2) = 0;
 flowdata.State.pf1 = flowdata.State.pf1(:);
 flowdata.State.pf2 = nan(2,1);
 
-[fstate, xout, tout, out_extra] = walk(xi_flight,1);
+[fstate, xout, tout, out_extra] = walk(xi_flight,2);

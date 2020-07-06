@@ -15,7 +15,9 @@ flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
 
 %Flags
 flowdata.Flags.silent = false;
+flowdata.Flags.ignore = true;
 flowdata.Flags.warnings = false;
+flowdata.Flags.rigid = false;
 
 %simulation parameters
 flowdata.Parameters.dim = 4; %state variable dimension
@@ -49,6 +51,7 @@ flowdata.setConfigs({})
 e1 = struct('name','Impact','nextphase','Oscillate','nextconfig','');
 flowdata.Phases.Oscillate.events = {e1};
 flowdata.End_Step.event_name = 'Impact';
+flowdata.End_Step.map = @flowdata.identityImpact;
 
 %Set initial phase and contact conditions
 flowdata.State.c_phase = 'Oscillate';

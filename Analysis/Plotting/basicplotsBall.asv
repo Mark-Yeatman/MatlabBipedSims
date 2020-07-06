@@ -37,8 +37,8 @@ ylabel("Force (N)")
 
 subplot(3,1,2)
 title("Force Components")
-plot(tout, vecnorm(squeeze(out_extra.Force(1,:,:))), tout, vecnorm(squeeze(out_extra.Force(2,:,:))) )
-legend("Spring-Gravity","Energy Tracking")
+plot(tout, squeeze(out_extra.Force(1,:,:)) )
+legend("x","y")
 xlabel('time')
 ylabel("Force (N)")
 

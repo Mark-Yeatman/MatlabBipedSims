@@ -1,6 +1,6 @@
 clear all
 path(pathdef)
-addpath('Experiments\ModelTests\')
+addpath('Experiments\Ball_Exps\')
 addpath('Analysis\Plotting\')
 addpath('UtilityFunctions\')
 addpath(genpath('Models\Ball\'))
@@ -8,10 +8,10 @@ addpath(genpath('Models\Ball\'))
 global flowdata
 
 flowdata = flowData();
-flowdata.E_func = @TotalE_func;
+flowdata.E_func = @BallE_virt_func;
 %ode equation handle and tolerenaces
 flowdata.eqnhandle = @dynamics;
-flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-1);
+flowdata.odeoptions = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'MaxStep',1e-3);
 
 %Flags
 flowdata.Flags.silent = false;
@@ -24,22 +24,30 @@ flowdata.Parameters.dim = 4; %state variable dimension
 
 %Environment Parameters
 e = 1;
-h = 0.75;
+h = 0;
 flowdata.Parameters.Environment.e = e;
 flowdata.Parameters.Environment.h = h;
 
 %Biped Parameters
-m = 1.5;
+m = 80;
 g = 9.81;
 flowdata.Parameters.Biped = containers.Map({'m','g'},{m,g});
 
-%Control and Parameters
-flowdata.Controls.Internal = {@MassSpringControl};
+%Control Parameters
+flowdata.Controls.Internal = {@MassSpringControl,@BallKPBC};
 
-k = 2;
-L0 = 8;
+k = 1000;
+L0 = 5;
 flowdata.Parameters.Spring.k = k;
 flowdata.Parameters.Spring.L0 = L0;
+
+flowdata.Parameters.KPBC.k = 1;
+flowdata.Parameters.KPBC.omega = diag([0,1]);
+flowdata.Parameters.KPBC.Eref = 2000;
+
+flowdata.Parameters.VirtE.m = m;
+flowdata.Parameters.VirtE.k = k/2;
+flowdata.Parameters.VirtE.L0 = L0*1.0;
 
 %Discrete Mappings 
 flowdata.setPhases({'Oscillate'})
@@ -55,8 +63,10 @@ flowdata.State.c_configs = {};
 flowdata.setImpacts();
 
 %ODE event initialization
-flowdata.tspan = 10; %seconds
-xi = [0,0.25,0,2];
-[fstate, xout, tout, out_extra] = walk(xi,2);
+flowdata.tspan =10; %seconds
 
-basicplotsBall
+v = 5;
+%Simulate
+xi = [0,L0,0,v];
+fstate = xi;
+[fstate, xout, tout, out_extra] = walk(fstate,3);
